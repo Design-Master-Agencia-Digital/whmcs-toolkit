@@ -11,6 +11,26 @@ Completion and typo detection for WHMCS module and hook development in PhpStorm 
 - Typo inspection: a misspelled hook name never fires and WHMCS gives no error. The plugin flags unknown hook names and API commands and offers a one-click fix to the closest valid name.
 - Live templates: type `whmodule`, `whaddon`, `whhook` or `whapi` and press Tab for a provisioning module, addon module, hook or localAPI call skeleton, named after the file (e.g. `acmehost.php` gives `acmehost_CreateAccount`).
 
+## Getting started
+
+1. In PhpStorm, open Settings > Plugins > Marketplace, search for "WHMCS Toolkit" and install it ([plugin page](https://plugins.jetbrains.com/plugin/35775-whmcs-toolkit)). The 30-day trial starts on first use.
+2. Open your WHMCS module or hooks folder. Nothing to configure: the plugin works in any PHP file.
+3. Try it:
+
+```php
+// includes/hooks/welcome.php: type whhook + Tab, then Ctrl+Space inside the quotes
+add_hook('ClientAdd', 1, function (array $vars) {
+    // Ctrl+Space inside $vars['...'] lists userid, firstname, email...
+    $results = localAPI('SendEmail', [
+        'messagename' => 'Client Signup Email',
+        'id' => $vars['userid'],
+    ]);
+});
+```
+
+- A typo like `add_hook('ClientAddd', ...)` is underlined; Alt+Enter replaces it with `ClientAdd`.
+- In `modules/servers/acmehost/acmehost.php`, type `whmodule` + Tab for a full provisioning module named `acmehost_*`.
+
 Paid plugin with a 30-day free trial, sold through JetBrains Marketplace.
 
 Support and bug reports: open an issue in this repository or write to contato@designmaster.com.br.
