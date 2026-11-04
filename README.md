@@ -8,6 +8,7 @@ Completion and typo detection for WHMCS module and hook development in PhpStorm 
 - Missing required parameters: `localAPI('AddClient', [...])` without `email` only fails at runtime. The plugin lists the required parameters missing from the array.
 - Quick Documentation: Ctrl+Q (F1 on macOS) or hover on a hook name or API command shows what it does, its `$vars` or parameters (required ones marked) and a link to the official page.
 - Typo inspection: a misspelled hook name never fires and WHMCS gives no error. The plugin flags unknown hook names and API commands and offers a one-click fix to the closest valid name.
+- Live templates: type `whmodule`, `whaddon`, `whhook` or `whapi` and press Tab for a provisioning module, addon module, hook or localAPI call skeleton, named after the file (e.g. `acmehost.php` gives `acmehost_CreateAccount`).
 
 Paid plugin with a 30-day free trial, sold through JetBrains Marketplace.
 
