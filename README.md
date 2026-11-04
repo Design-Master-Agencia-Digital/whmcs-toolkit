@@ -35,6 +35,6 @@ Paid plugin with a 30-day free trial, sold through JetBrains Marketplace.
 
 Support and bug reports: open an issue in this repository or write to contato@designmaster.com.br.
 
-License: [EULA](EULA.md).
+License: [EULA](EULA.md). Privacy: [the plugin collects no data](PRIVACY.md).
 
 Made by [Design Master](https://www.designmaster.com.br/?utm_source=github.com&utm_medium=referral&utm_campaign=whmcs-toolkit), a WHMCS hosting company in Brazil.
