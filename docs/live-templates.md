@@ -36,6 +36,13 @@ $api->create($params['username'], $params['domain'], $params['configoption1']);
 4. Anything your code throws is caught, written with `logModuleCall` and returned as the error text WHMCS shows to the admin. The request and response appear under Utilities > Logs > Module Log (turn on Enable Debug Logging there first). Returning `success` marks the action as done.
 5. Fill in the other functions the same way, and delete the ones your server does not support.
 
+## Example: a payment gateway in two files
+
+1. Create `modules/gateways/acmepay.php` and type `whgateway` + Tab. The file name fills the module name: you get `acmepay_MetaData`, `acmepay_config` and `acmepay_link`. Type the display name once (the first stop).
+2. Adapt `acmepay_link`: WHMCS calls it when the client sees the invoice. Build the payment button from `$params`, for example `$params['invoiceid']`, `$params['amount']`, `$params['currency']`, `$params['systemurl']` and `$params['returnurl']`. Ctrl+Space inside `$params['...']` lists what WHMCS passes here, and an unknown key is underlined.
+3. Create `modules/gateways/callback/acmepay.php` and type `whcallback` + Tab. It loads WHMCS, checks that the gateway is active, validates the invoice (`checkCbInvoiceID`) and the transaction id (`checkCbTransID`, rejects duplicates), logs the call to Billing > Gateway Log and marks the invoice paid with `addInvoicePayment`.
+4. Adapt it: replace `$_POST['invoiceid']`, `$_POST['transid']` and `$_POST['amount']` with the fields your provider sends, and verify the provider's signature before the `checkCb*` calls. Point the provider's webhook to `https://your-whmcs/modules/gateways/callback/acmepay.php`.
+
 ## All abbreviations
 
 | Type + Tab | Generates |
