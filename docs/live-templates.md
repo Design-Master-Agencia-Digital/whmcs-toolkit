@@ -21,6 +21,21 @@ add_hook('InvoicePaid', 1, function (array $vars) {
 3. Adapt it: `$invoice` already holds the full invoice (total, status, items, clientid). To email the client, call `localAPI('SendEmail', ['messagename' => 'Invoice Payment Confirmation', 'id' => $vars['invoiceid']])` below the check. The `logActivity` line shows up in Utilities > Logs > Activity Log if the invoice cannot be loaded, so a failure never stops the other hooks.
 4. Ctrl+Space inside `$vars['...']` lists the keys WHMCS passes to this hook, and Ctrl+Q on `GetInvoice` shows its parameters.
 
+## Example: a provisioning module in one minute
+
+1. Create `modules/servers/acmehost/acmehost.php`.
+2. Type `whmodule` and press Tab. The file name fills the module name, so you get `acmehost_MetaData`, `acmehost_ConfigOptions`, `acmehost_CreateAccount`, `acmehost_SuspendAccount`, `acmehost_UnsuspendAccount`, `acmehost_TerminateAccount`, `acmehost_ChangePassword` and `acmehost_ChangePackage`. Type the display name once (the first stop) and the cursor lands inside `acmehost_CreateAccount`.
+3. Adapt it: the template declares one `ConfigOptions` field, `Package`. WHMCS hands it to every function as `$params['configoption1']`, so the call to your server is a couple of lines inside the `try`:
+
+```php
+$api = new AcmeApi($params['serverhostname'], $params['serverpassword']);
+$api->create($params['username'], $params['domain'], $params['configoption1']);
+```
+
+   Ctrl+Space inside `$params['...']` lists every key WHMCS passes here (serviceid, domain, username, serverip, configoption1-24...). A typo such as `$params['serverhostnme']` is underlined and Alt+Enter fixes it.
+4. Anything your code throws is caught, written with `logModuleCall` and returned as the error text WHMCS shows to the admin. The request and response appear under Utilities > Logs > Module Log (turn on Enable Debug Logging there first). Returning `success` marks the action as done.
+5. Fill in the other functions the same way, and delete the ones your server does not support.
+
 ## All abbreviations
 
 | Type + Tab | Generates |
