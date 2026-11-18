@@ -31,6 +31,7 @@ add_hook('ClientAdd', 1, function (array $vars) {
 ```
 
 - A typo like `add_hook('ClientAddd', ...)` is underlined; Alt+Enter replaces it with `ClientAdd`.
+- Remove `'id'` from the `localAPI('SendEmail', ...)` array above: the plugin underlines the call and lists the required parameter that is missing, which WHMCS would only report at runtime.
 - In `modules/servers/acmehost/acmehost.php`, type `whmodule` + Tab for a full provisioning module named `acmehost_*`.
 
 Paid plugin with a 30-day free trial, sold through JetBrains Marketplace.
