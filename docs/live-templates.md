@@ -65,6 +65,22 @@ WHMCS does not warn about a misspelled hook name or `$vars` key: the hook never 
 2. The key is underlined as unknown for `InvoicePaid`. Press Alt+Enter and pick the suggested fix: it is replaced with the closest valid key.
 3. The same applies to hook names (`add_hook('InvoicePad', ...)`), API commands (`localAPI('GetInvoce', ...)`), table and column names in `Capsule::table()` and `$params['...']` keys in modules.
 
+## Example: an addon module with an admin page
+
+1. Create `modules/addons/acmenotes/acmenotes.php`.
+2. Type `whaddon` and press Tab. The file name fills the module name, so you get `acmenotes_config`, `acmenotes_activate`, `acmenotes_deactivate` and `acmenotes_output`. Type the display name once and the cursor lands inside `acmenotes_output`.
+3. Adapt it: `acmenotes_output` prints the page admins see under Addons. WHMCS passes `$vars` with your module settings and `$vars['modulelink']`, the URL of this page for links and forms:
+
+```php
+function acmenotes_output($vars)
+{
+    echo '<a href="' . $vars['modulelink'] . '&amp;action=hello">Say hello</a>';
+}
+```
+
+4. To store data, create the table in `acmenotes_activate` with `\WHMCS\Database\Capsule::schema()->create(...)` and return `['status' => 'success', 'description' => '...']` (use `'status' => 'error'` on failure). In a `Capsule::table()` query the plugin completes table and column names and underlines a typo.
+5. Turn it on in Setup > Addon Modules: Activate, then Configure to give an admin role access. The template leaves `fields` empty; add your settings there and read them back from `$vars`.
+
 ## All abbreviations
 
 | Type + Tab | Generates |
