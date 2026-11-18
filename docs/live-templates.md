@@ -43,6 +43,28 @@ $api->create($params['username'], $params['domain'], $params['configoption1']);
 3. Create `modules/gateways/callback/acmepay.php` and type `whcallback` + Tab. It loads WHMCS, checks that the gateway is active, validates the invoice (`checkCbInvoiceID`) and the transaction id (`checkCbTransID`, rejects duplicates), logs the call to Billing > Gateway Log and marks the invoice paid with `addInvoicePayment`.
 4. Adapt it: replace `$_POST['invoiceid']`, `$_POST['transid']` and `$_POST['amount']` with the fields your provider sends, and verify the provider's signature before the `checkCb*` calls. Point the provider's webhook to `https://your-whmcs/modules/gateways/callback/acmepay.php`.
 
+## Example: show a custom value in the client area
+
+1. Create `includes/hooks/clientarea.php` and type `whclientarea` + Tab. You get a `ClientAreaPage` hook that returns an array, with the cursor inside it.
+2. Adapt it: every key you return becomes a Smarty variable on the client area pages.
+
+```php
+add_hook('ClientAreaPage', 1, function (array $vars) {
+    return ['supportHours' => 'Mon-Fri 9:00-18:00'];
+});
+```
+
+3. In your template (for example `templates/<theme>/footer.tpl`) print it with `{$supportHours}`. Reload any client area page and the text appears.
+4. Type `$vars['` inside the callback and Ctrl+Space lists the keys WHMCS passes to this hook.
+
+## Example: catch a typo before WHMCS silently ignores it
+
+WHMCS does not warn about a misspelled hook name or `$vars` key: the hook never fires, or reads `null`. The WHMCS inspection underlines it while you type.
+
+1. In the `whinvoicepaid` hook above, change `$vars['invoiceid']` to `$vars['invoicid']`.
+2. The key is underlined as unknown for `InvoicePaid`. Press Alt+Enter and pick the suggested fix: it is replaced with the closest valid key.
+3. The same applies to hook names (`add_hook('InvoicePad', ...)`), API commands (`localAPI('GetInvoce', ...)`), table and column names in `Capsule::table()` and `$params['...']` keys in modules.
+
 ## All abbreviations
 
 | Type + Tab | Generates |
