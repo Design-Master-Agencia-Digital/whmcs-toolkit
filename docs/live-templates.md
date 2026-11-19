@@ -157,6 +157,24 @@ if ($vars['priority'] === 'High') {
 3. Open a ticket as a client with priority High. The staff-only note appears in the ticket under Support > Tickets. If the call fails, the `catch` block writes `TicketOpen hook failed: ...` to Utilities > Logs > Activity Log and the ticket is still created.
 4. For the other ticket events use `whticketreply` (admin reply), `whticketuser` (client reply), `whticketclose`, `whticketstatus`, `whticketpriority` and `whticketdept`; they generate the same shape. See the table below.
 
+## Example: leave a note on the client when an order is accepted
+
+1. Create `includes/hooks/orders.php`, type `whorder` and press Tab. You get an `AcceptOrder` hook that loads the order with `localAPI('GetOrders', ...)` inside a `try`, with the cursor on the line after it. WHMCS passes only `orderid` to this hook, so the template fetches the rest for you.
+2. `GetOrders` answers with a list: the order you asked for is `$order['orders']['order'][0]`, with `userid`, `amount`, `paymentstatus` and `status`. Replace the cursor line with:
+
+```php
+$row = $order['orders']['order'][0] ?? null;
+if ($row && $row['paymentstatus'] !== 'Paid') {
+    localAPI('AddClientNote', [
+        'userid' => $row['userid'],
+        'notes' => 'Order #' . $vars['orderid'] . ' accepted while still unpaid (' . $row['amount'] . ').',
+    ]);
+}
+```
+
+3. Accept an unpaid order under Orders > Pending Orders. The note shows up on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `AcceptOrder hook failed: ...` to Utilities > Logs > Activity Log and the acceptance still goes through.
+4. For the other order events use `whorderpaid`, `whordercancel`, `whorderfraud`, `whorderpending` and `whorderaccept`; they generate the same shape. See the table below.
+
 ## All abbreviations
 
 | Type + Tab | Generates |
