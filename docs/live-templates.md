@@ -140,6 +140,23 @@ add_hook('DailyCronJob', 1, function (array $vars) {
 2. Call WHMCS from it with `whapi`: type it, Tab, fill the command (for example `GetInvoices`) and the array. The generated check logs `GetInvoices failed: ...` to the Activity Log when the result is not `success`.
 3. Check the outcome in Utilities > Logs > Activity Log after the next cron run.
 
+## Example: flag an urgent ticket for staff when it is opened
+
+1. Create `includes/hooks/tickets.php`, type `whticket` and press Tab. You get a `TicketOpen` hook that already loads the ticket with `localAPI('GetTicket', ...)` inside a `try`, with the cursor on the line after it.
+2. `$vars` carries what WHMCS passes to `TicketOpen`: `ticketid`, `userid`, `deptid`, `deptname`, `subject`, `message` and `priority`. Use them directly, so you do not need the `GetTicket` result for a simple rule. Replace the cursor line with:
+
+```php
+if ($vars['priority'] === 'High') {
+    localAPI('AddTicketNote', [
+        'ticketid' => $vars['ticketid'],
+        'message' => 'Opened as High priority in ' . $vars['deptname'] . ': check first.',
+    ]);
+}
+```
+
+3. Open a ticket as a client with priority High. The staff-only note appears in the ticket under Support > Tickets. If the call fails, the `catch` block writes `TicketOpen hook failed: ...` to Utilities > Logs > Activity Log and the ticket is still created.
+4. For the other ticket events use `whticketreply` (admin reply), `whticketuser` (client reply), `whticketclose`, `whticketstatus`, `whticketpriority` and `whticketdept`; they generate the same shape. See the table below.
+
 ## All abbreviations
 
 | Type + Tab | Generates |
