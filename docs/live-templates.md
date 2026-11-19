@@ -65,6 +65,23 @@ WHMCS does not warn about a misspelled hook name or `$vars` key: the hook never 
 2. The key is underlined as unknown for `InvoicePaid`. Press Alt+Enter and pick the suggested fix: it is replaced with the closest valid key.
 3. The same applies to hook names (`add_hook('InvoicePad', ...)`), API commands (`localAPI('GetInvoce', ...)`), table and column names in `Capsule::table()` and `$params['...']` keys in modules.
 
+## Example: query the WHMCS database without guessing column names
+
+WHMCS table and column names are easy to misremember (`tblhosting.domainstatus`, `tblinvoices.datepaid`), and a wrong column only fails at runtime. The plugin knows the 171 core tables of WHMCS 9.0.
+
+1. In any hook or module file, add `use WHMCS\Database\Capsule;` and type `Capsule::table('tblinv` then Ctrl+Space: `tblinvoices` (22 columns) is listed. Ctrl+Q (F1 on macOS) on the table name lists every column and its type.
+2. Chain `->where('` and press Ctrl+Space: the columns of `tblinvoices` are offered (`status`, `total`, `duedate`, `datepaid`...). Complete the query:
+
+```php
+$overdue = Capsule::table('tblinvoices')
+    ->where('status', 'Unpaid')
+    ->where('duedate', '<', date('Y-m-d'))
+    ->orderBy('duedate')
+    ->pluck('total', 'id');
+```
+
+3. Change `duedate` to `duedat`: it is underlined as an unknown column of `tblinvoices` and Alt+Enter replaces it with `duedate`. The same works for `select`, `value`, `pluck`, `orderBy` and the keys of `insert`/`update`, and after a `join('tblclients', ...)` the columns of both tables are checked.
+
 ## Example: an addon module with an admin page
 
 1. Create `modules/addons/acmenotes/acmenotes.php`.
