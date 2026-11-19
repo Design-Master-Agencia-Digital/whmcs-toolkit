@@ -81,6 +81,14 @@ function acmenotes_output($vars)
 4. To store data, create the table in `acmenotes_activate` with `\WHMCS\Database\Capsule::schema()->create(...)` and return `['status' => 'success', 'description' => '...']` (use `'status' => 'error'` on failure). In a `Capsule::table()` query the plugin completes table and column names and underlines a typo.
 5. Turn it on in Setup > Addon Modules: Activate, then Configure to give an admin role access. The template leaves `fields` empty; add your settings there and read them back from `$vars`.
 
+## Example: a domain registrar module in one minute
+
+1. Create `modules/registrars/acmedomains/acmedomains.php` and type `whregistrar` + Tab. The file name fills the module name: you get `acmedomains_MetaData`, `acmedomains_getConfigArray`, `acmedomains_RegisterDomain`, `acmedomains_GetNameservers` and `acmedomains_SaveNameservers`. Type the display name once (the first stop).
+2. Adapt `getConfigArray`: each key becomes a field under Configuration > System Settings > Domain Registrars (here `APIKey`). WHMCS hands the saved values back in `$params`, so the key is read as `$params['APIKey']`.
+3. Write the registration in the `try` block, where the cursor stops. WHMCS calls `RegisterDomain` with the domain parts and contact data in `$params`, for example `$params['sld']` (`example`), `$params['tld']` (`com`), `$params['regperiod']` (years), `$params['ns1']` and `$params['domainid']`. Call your registrar's API there, then leave `return ['success' => true];` as is.
+4. Report failures with the `catch` block: `['error' => $e->getMessage()]` shows the message in the admin area instead of marking the domain registered.
+5. Fill `GetNameservers` (return `ns1` to `ns5` as the registrar has them) and `SaveNameservers` (read `$params['ns1']`...). Activate the module under Domain Registrars and assign it to a TLD in Domain Pricing.
+
 ## All abbreviations
 
 | Type + Tab | Generates |
