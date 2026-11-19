@@ -106,6 +106,40 @@ function acmenotes_output($vars)
 4. Report failures with the `catch` block: `['error' => $e->getMessage()]` shows the message in the admin area instead of marking the domain registered.
 5. Fill `GetNameservers` (return `ns1` to `ns5` as the registrar has them) and `SaveNameservers` (read `$params['ns1']`...). Activate the module under Domain Registrars and assign it to a TLD in Domain Pricing.
 
+## Example: block an order at checkout
+
+1. Create `includes/hooks/checkout.php` and type `whcheckout`, then Tab. The cursor stops inside the `if`:
+
+```php
+add_hook('ShoppingCartValidateCheckout', 1, function (array $vars) {
+    $errors = [];
+    if (empty($vars['companyname'])) {
+        $errors[] = 'Please enter your company name to place an order';
+    }
+    return $errors;
+});
+```
+
+2. Replace the condition with your rule. `$vars` carries the checkout form: `companyname`, `promocode`, `notes`, `paymentmethod`, `custtype` (`new` or `existing`) and the new-client fields. Ctrl+Space inside `$vars['...']` lists them, and a misspelled key is underlined (see the typo example above).
+3. Every string you put in `$errors` is shown to the client and no order or invoice is created. Return an empty array to let the checkout continue.
+
+## Example: a daily job that never breaks the cron
+
+1. Create `includes/hooks/daily.php`, type `whcron` and press Tab. The body sits inside a `try` block, so one failing task does not stop the other `DailyCronJob` hooks:
+
+```php
+add_hook('DailyCronJob', 1, function (array $vars) {
+    try {
+        // your code here
+    } catch (\Throwable $e) {
+        logActivity('DailyCronJob hook failed: ' . $e->getMessage());
+    }
+});
+```
+
+2. Call WHMCS from it with `whapi`: type it, Tab, fill the command (for example `GetInvoices`) and the array. The generated check logs `GetInvoices failed: ...` to the Activity Log when the result is not `success`.
+3. Check the outcome in Utilities > Logs > Activity Log after the next cron run.
+
 ## All abbreviations
 
 | Type + Tab | Generates |
