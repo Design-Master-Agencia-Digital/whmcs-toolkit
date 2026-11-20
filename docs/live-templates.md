@@ -240,6 +240,17 @@ if ((float) $invoice['total'] >= 1000) {
 
 3. Generate an invoice of 1000 or more (Billing > Create Invoice, then publish it so it leaves Draft). The line shows up in Utilities > Logs > Activity Log. Change `1000` to your own threshold, or swap `logActivity` for `localAPI('AddClientNote', ...)` to keep the flag on the client. If the lookup fails, the `catch` block writes `InvoiceCreated hook failed: ...` to the same log and the invoice is created anyway. Field names come from the WHMCS API reference; confirm them on your version with `logActivity(json_encode($invoice))` the first time.
 
+## Example: record why a service was suspended
+
+1. Create `includes/hooks/provisioning.php`, add `<?php` on the first line, type `whmodulesuspend` and press Tab. You get an `AfterModuleSuspend` hook with `$serviceId` and `$reason` already read from `$vars['params']` (`serviceid` and `suspendreason`), and the cursor on the line after them. WHMCS runs this hook only after the provisioning module's suspend function succeeded.
+2. Replace the cursor line with:
+
+```php
+logActivity('Service #' . $serviceId . ' (' . ($vars['params']['domain'] ?? 'no domain') . ') suspended: ' . ($reason !== '' ? $reason : 'no reason given') . '.');
+```
+
+3. Suspend a service (Clients > Products/Services > Module Commands > Suspend, with a reason typed in the box). The line shows up in Utilities > Logs > Activity Log. `whmodulecreate`, `whmoduleunsuspend` and `whmoduleterminate` give the same hook for the other module commands, so you can log each step of a service's life the same way. `$vars['params']` is the same array your module functions receive, so `username`, `serverip` and your own `configoption1` are there too; Ctrl+Space inside `$vars['params']['...']` lists them. The suspend reason is only filled when the command comes from the admin area or the automation with a reason; the `?? ''` in the template covers the cases where WHMCS sends none.
+
 ## Troubleshooting: Tab does nothing
 
 - The cursor must be in PHP code: after `<?php`, not in an empty file, an HTML block, a comment or a string. Add `<?php` on the first line and try again.
