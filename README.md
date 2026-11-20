@@ -60,6 +60,7 @@ Each one is a complete, copyable result built from a live template:
 - [Warn staff when an order is marked as fraud](docs/live-templates.md#example-warn-staff-when-an-order-is-marked-as-fraud)
 - [Note the client when a late fee is added](docs/live-templates.md#example-note-the-client-when-a-late-fee-is-added)
 - [Leave a note on the client when an invoice is refunded](docs/live-templates.md#example-leave-a-note-on-the-client-when-an-invoice-is-refunded)
+- [Clean up your own data when a service is terminated](docs/live-templates.md#example-clean-up-your-own-data-when-a-service-is-terminated)
 
 Paid plugin with a 30-day free trial, sold through JetBrains Marketplace.
 

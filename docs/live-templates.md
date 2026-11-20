@@ -335,6 +335,18 @@ logActivity('Service #' . $serviceId . ' (' . ($vars['params']['domain'] ?? 'no 
 
 3. Change a service's product (Clients > Products/Services > change the Product/Service, save, then Module Commands > Change Package) or accept an upgrade order. The line shows up in Utilities > Logs > Activity Log. If the module has no `ChangePackage` function the hook never fires; the `whmodule` skeleton does not generate one, so add it when your product needs it. Confirm which keys your WHMCS version sends with `logActivity(json_encode($vars['params']))` the first time; Ctrl+Space inside `$vars['params']['...']` lists the usual ones.
 
+## Example: clean up your own data when a service is terminated
+
+1. In `includes/hooks/provisioning.php` (with `<?php` on the first line) type `whmoduleterminate` and press Tab. You get an `AfterModuleTerminate` hook with `$serviceId` already read from `$vars['params']['serviceid']` and the cursor on the next line. WHMCS runs it only after the provisioning module's `TerminateAccount` function succeeded, so you never delete your data for an account that is still alive on the server.
+2. Replace the cursor line with (the table name is yours):
+
+```php
+\WHMCS\Database\Capsule::table('mod_myaddon_usage')->where('serviceid', $serviceId)->delete();
+logActivity('Service #' . $serviceId . ' terminated, usage rows removed.');
+```
+
+3. Terminate a test service (Clients > Products/Services > Module Commands > Terminate). The line shows up in Utilities > Logs > Activity Log and the rows for that service are gone from your table. Use a test service first: `delete()` is permanent. If you would rather keep a history, swap the delete for an `update(['terminated_at' => date('Y-m-d H:i:s')])`. Confirm which keys your WHMCS version sends with `logActivity(json_encode($vars['params']))` the first time.
+
 ## Troubleshooting: Tab does nothing
 
 - The cursor must be in PHP code: after `<?php`, not in an empty file, an HTML block, a comment or a string. Add `<?php` on the first line and try again.
