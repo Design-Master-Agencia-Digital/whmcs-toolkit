@@ -35,6 +35,26 @@ add_hook('ClientAdd', 1, function (array $vars) {
 - Add `localAPI('AddClient', ['firstname' => 'Ana']);` inside the closure: the plugin underlines the call and lists the required parameters still missing (`lastname`, `email`, `address1`...), which WHMCS would only report at runtime.
 - In `modules/servers/acmehost/acmehost.php`, type `whmodule` + Tab for a full provisioning module named `acmehost_*`.
 
+## Worked examples
+
+Each one is a complete, copyable result built from a live template:
+
+- [Do something when an invoice is paid](docs/live-templates.md#example-do-something-when-an-invoice-is-paid)
+- [A provisioning module in one minute](docs/live-templates.md#example-a-provisioning-module-in-one-minute)
+- [A payment gateway in two files](docs/live-templates.md#example-a-payment-gateway-in-two-files)
+- [Show a custom value in the client area](docs/live-templates.md#example-show-a-custom-value-in-the-client-area)
+- [Catch a typo before WHMCS silently ignores it](docs/live-templates.md#example-catch-a-typo-before-whmcs-silently-ignores-it)
+- [Query the WHMCS database without guessing column names](docs/live-templates.md#example-query-the-whmcs-database-without-guessing-column-names)
+- [An addon module with an admin page](docs/live-templates.md#example-an-addon-module-with-an-admin-page)
+- [A domain registrar module in one minute](docs/live-templates.md#example-a-domain-registrar-module-in-one-minute)
+- [Block an order at checkout](docs/live-templates.md#example-block-an-order-at-checkout)
+- [A daily job that never breaks the cron](docs/live-templates.md#example-a-daily-job-that-never-breaks-the-cron)
+- [Flag an urgent ticket for staff when it is opened](docs/live-templates.md#example-flag-an-urgent-ticket-for-staff-when-it-is-opened)
+- [Leave a note on the client when an order is accepted](docs/live-templates.md#example-leave-a-note-on-the-client-when-an-order-is-accepted)
+- [Tag new clients that need a tax ID](docs/live-templates.md#example-tag-new-clients-that-need-a-tax-id)
+- [Log every domain your registrar module registers](docs/live-templates.md#example-log-every-domain-your-registrar-module-registers)
+- [Record an accepted quote on the client](docs/live-templates.md#example-record-an-accepted-quote-on-the-client)
+
 Paid plugin with a 30-day free trial, sold through JetBrains Marketplace.
 
 Support and bug reports: open an issue in this repository or write to contato@designmaster.com.br.
