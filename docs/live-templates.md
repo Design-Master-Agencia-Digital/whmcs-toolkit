@@ -324,6 +324,17 @@ localAPI('AddClientNote', [
 
 3. Run the daily cron on an overdue invoice that is subject to late fees (Configuration > System Settings > Automation Settings sets the grace days). The note shows up on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `AddInvoiceLateFee hook failed: ...` to Utilities > Logs > Activity Log and the late fee still goes through. Field names come from the WHMCS API reference; confirm them on your version with `logActivity(json_encode($invoice))` the first time. `whinvoicetotal` and `whinvoicegateway` generate the same shape for the other invoice changes.
 
+## Example: log a service's new package after an upgrade
+
+1. In `includes/hooks/provisioning.php` (with `<?php` on the first line) type `whmodulechangepackage` and press Tab. You get an `AfterModuleChangePackage` hook with `$serviceId` already read from `$vars['params']['serviceid']` and the cursor on the next line. WHMCS runs it only after the provisioning module's `ChangePackage` function succeeded, so a failed upgrade is never logged as done.
+2. `$vars['params']` is the same array your module functions receive. Replace the cursor line with:
+
+```php
+logActivity('Service #' . $serviceId . ' (' . ($vars['params']['domain'] ?? 'no domain') . ') moved to product #' . ($vars['params']['pid'] ?? '?') . ' on the server.');
+```
+
+3. Change a service's product (Clients > Products/Services > change the Product/Service, save, then Module Commands > Change Package) or accept an upgrade order. The line shows up in Utilities > Logs > Activity Log. If the module has no `ChangePackage` function the hook never fires; the `whmodule` skeleton does not generate one, so add it when your product needs it. Confirm which keys your WHMCS version sends with `logActivity(json_encode($vars['params']))` the first time; Ctrl+Space inside `$vars['params']['...']` lists the usual ones.
+
 ## Troubleshooting: Tab does nothing
 
 - The cursor must be in PHP code: after `<?php`, not in an empty file, an HTML block, a comment or a string. Add `<?php` on the first line and try again.
