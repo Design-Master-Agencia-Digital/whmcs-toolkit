@@ -251,6 +251,20 @@ logActivity('Service #' . $serviceId . ' (' . ($vars['params']['domain'] ?? 'no 
 
 3. Suspend a service (Clients > Products/Services > Module Commands > Suspend, with a reason typed in the box). The line shows up in Utilities > Logs > Activity Log. `whmodulecreate`, `whmoduleunsuspend` and `whmoduleterminate` give the same hook for the other module commands, so you can log each step of a service's life the same way. `$vars['params']` is the same array your module functions receive, so `username`, `serverip` and your own `configoption1` are there too; Ctrl+Space inside `$vars['params']['...']` lists them. The suspend reason is only filled when the command comes from the admin area or the automation with a reason; the `?? ''` in the template covers the cases where WHMCS sends none.
 
+## Example: raise a ticket's priority when the client replies "urgent"
+
+1. In `includes/hooks/tickets.php`, type `whticketuser` and press Tab. You get a `TicketUserReply` hook that already loads the ticket with `localAPI('GetTicket', ...)` inside a `try`, with the cursor on the line after it.
+2. `$vars` carries `ticketid`, `replyid`, `userid`, `deptname`, `subject`, `message`, `priority` and `status`, so the rule needs no extra call. Replace the cursor line with:
+
+```php
+if ($vars['priority'] !== 'High' && stripos($vars['message'], 'urgent') !== false) {
+    localAPI('UpdateTicket', ['ticketid' => $vars['ticketid'], 'priority' => 'High']);
+}
+```
+
+3. Reply to an open Low priority ticket as a client with the word "urgent" in the message. The ticket shows High under Support > Tickets. If the call fails, the `catch` block writes `TicketUserReply hook failed: ...` to Utilities > Logs > Activity Log and the reply is still saved.
+4. The priority change fires `TicketPriorityChange` (`whticketpriority`), not `TicketUserReply` again, so the rule cannot loop. Add `AddTicketNote` (see the example above) if staff should also see why it changed.
+
 ## Example: leave a note on the client when an invoice is refunded
 
 1. Create `includes/hooks/invoices.php` (or reuse it), make sure `<?php` is on the first line, type `whinvoicerefunded` and press Tab. You get an `InvoiceRefunded` hook that loads the invoice with `localAPI('GetInvoice', ...)` inside a `try`, with the cursor on the line after it. WHMCS passes `invoiceid` in `$vars`.
