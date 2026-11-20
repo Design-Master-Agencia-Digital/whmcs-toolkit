@@ -4,7 +4,7 @@ WHMCS Toolkit ships 56 live templates. Open a `.php` file, type the abbreviation
 
 ## Example: do something when an invoice is paid
 
-1. Create `includes/hooks/paid.php` in your WHMCS folder.
+1. Create `includes/hooks/paid.php` in your WHMCS folder and start it with `<?php` on the first line, then press Enter. The templates only expand inside PHP code, so in a completely empty file nothing happens (see Troubleshooting below).
 2. Type `whinvoicepaid` and press Tab. You get this, with the cursor on the empty line:
 
 ```php
@@ -226,6 +226,13 @@ if ($row) {
 ```
 
 3. Accept a quote from the client area. The note shows up on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `AcceptQuote hook failed: ...` to Utilities > Logs > Activity Log and the acceptance still goes through. The response shape comes from the WHMCS API reference; check it against your version with `logActivity(json_encode($quotes))` the first time.
+
+## Troubleshooting: Tab does nothing
+
+- The cursor must be in PHP code: after `<?php`, not in an empty file, an HTML block, a comment or a string. Add `<?php` on the first line and try again.
+- The abbreviation must be the last word before the cursor, typed exactly (`whinvoicepaid`, not `wh invoicepaid`). If the completion popup is open, press Tab again or Esc first.
+- Check Settings > Editor > Live Templates > WHMCS: the group must be ticked, and each template must list PHP under its applicable contexts.
+- Completion and typo inspection (Ctrl+Space, Alt+Enter) need the PHP plugin, which PhpStorm bundles and IntelliJ IDEA Ultimate needs installed from Settings > Plugins.
 
 ## All abbreviations
 
