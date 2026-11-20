@@ -251,6 +251,20 @@ logActivity('Service #' . $serviceId . ' (' . ($vars['params']['domain'] ?? 'no 
 
 3. Suspend a service (Clients > Products/Services > Module Commands > Suspend, with a reason typed in the box). The line shows up in Utilities > Logs > Activity Log. `whmodulecreate`, `whmoduleunsuspend` and `whmoduleterminate` give the same hook for the other module commands, so you can log each step of a service's life the same way. `$vars['params']` is the same array your module functions receive, so `username`, `serverip` and your own `configoption1` are there too; Ctrl+Space inside `$vars['params']['...']` lists them. The suspend reason is only filled when the command comes from the admin area or the automation with a reason; the `?? ''` in the template covers the cases where WHMCS sends none.
 
+## Example: leave a note on the client when an invoice is refunded
+
+1. Create `includes/hooks/invoices.php` (or reuse it), make sure `<?php` is on the first line, type `whinvoicerefunded` and press Tab. You get an `InvoiceRefunded` hook that loads the invoice with `localAPI('GetInvoice', ...)` inside a `try`, with the cursor on the line after it. WHMCS passes `invoiceid` in `$vars`.
+2. `GetInvoice` answers with `userid`, `total` and `status` at the top level. Replace the cursor line with:
+
+```php
+localAPI('AddClientNote', [
+    'userid' => $invoice['userid'],
+    'notes' => 'Invoice #' . $vars['invoiceid'] . ' refunded (' . $invoice['total'] . '). Check the client before reactivating services.',
+]);
+```
+
+3. Refund a paid invoice (Billing > Transactions or the invoice's Refund button). The note shows up on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `InvoiceRefunded hook failed: ...` to Utilities > Logs > Activity Log and the refund still goes through. Field names come from the WHMCS API reference; confirm them on your version with `logActivity(json_encode($invoice))` the first time. `whinvoicecancelled`, `whinvoicereminder` and `whinvoiceunpaid` generate the same shape for the other invoice events.
+
 ## Troubleshooting: Tab does nothing
 
 - The cursor must be in PHP code: after `<?php`, not in an empty file, an HTML block, a comment or a string. Add `<?php` on the first line and try again.
