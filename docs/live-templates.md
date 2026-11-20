@@ -296,6 +296,20 @@ localAPI('AddClientNote', [
 
 3. Open an order (Orders > List All Orders) and use Set as Fraud. The note shows up on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `FraudOrder hook failed: ...` to Utilities > Logs > Activity Log and the status change still goes through. The shape of the `GetOrders` answer comes from the WHMCS API reference; confirm it on your version with `logActivity(json_encode($order))` the first time. `whordercancel`, `whorderpending` and `whorderpaid` generate the same shape for the other order events.
 
+## Example: note the client when a late fee is added
+
+1. In `includes/hooks/invoices.php` (with `<?php` on the first line) type `whinvoicelatefee` and press Tab. You get an `AddInvoiceLateFee` hook that loads the invoice with `localAPI('GetInvoice', ...)` inside a `try`, with the cursor on the line after it. WHMCS passes `invoiceid` in `$vars` right after it adds the late fee line to the invoice.
+2. `GetInvoice` answers with `userid`, `total` and `duedate` at the top level. Replace the cursor line with:
+
+```php
+localAPI('AddClientNote', [
+    'userid' => $invoice['userid'],
+    'notes' => 'Late fee added to invoice #' . $vars['invoiceid'] . ' (due ' . $invoice['duedate'] . ', total now ' . $invoice['total'] . ').',
+]);
+```
+
+3. Run the daily cron on an overdue invoice that is subject to late fees (Configuration > System Settings > Automation Settings sets the grace days). The note shows up on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `AddInvoiceLateFee hook failed: ...` to Utilities > Logs > Activity Log and the late fee still goes through. Field names come from the WHMCS API reference; confirm them on your version with `logActivity(json_encode($invoice))` the first time. `whinvoicetotal` and `whinvoicegateway` generate the same shape for the other invoice changes.
+
 ## Troubleshooting: Tab does nothing
 
 - The cursor must be in PHP code: after `<?php`, not in an empty file, an HTML block, a comment or a string. Add `<?php` on the first line and try again.
