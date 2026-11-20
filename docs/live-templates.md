@@ -192,6 +192,24 @@ if ($vars['country'] === 'BR' && $vars['companyname'] === '') {
 3. Register a test client with country Brazil and no company name. The note shows up on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `ClientAdd hook failed: ...` to Utilities > Logs > Activity Log and the signup still completes.
 4. Misspell a key, for example `$vars['conpanyname']`, and the WHMCS inspection flags it with a quick fix to `companyname`. For other client events use `whclientedit`, `whclientclose` and `whclientpassword`; they generate the same shape. See the table below.
 
+## Example: log every domain your registrar module registers
+
+1. Create `includes/hooks/domains.php`, type `whdomainregister` and press Tab. You get an `AfterRegistrarRegistration` hook that already reads `$domainId = (int) $vars['params']['domainid'];`, with the cursor on the next line. `$vars['params']` is the same array your registrar module receives, so `sld`, `tld` and `regperiod` are there too.
+2. Replace the cursor line with:
+
+```php
+logActivity(sprintf(
+    'Domain %s.%s registered for %d year(s) (domain #%d)',
+    $vars['params']['sld'],
+    $vars['params']['tld'],
+    $vars['params']['regperiod'],
+    $domainId
+));
+```
+
+3. Register a domain through your registrar module (for example from Clients > Domain Registration > Register). The line shows up under Utilities > Logs > Activity Log. The hook runs only after the registrar reported success; for failures WHMCS fires `AfterRegistrarRegistrationFailed`, which has no template here.
+4. For the other registrar events use `whdomainrenew` and `whdomaintransfer`; they generate the same shape. See the table below.
+
 ## All abbreviations
 
 | Type + Tab | Generates |
