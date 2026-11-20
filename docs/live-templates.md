@@ -265,6 +265,22 @@ localAPI('AddClientNote', [
 
 3. Refund a paid invoice (Billing > Transactions or the invoice's Refund button). The note shows up on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `InvoiceRefunded hook failed: ...` to Utilities > Logs > Activity Log and the refund still goes through. Field names come from the WHMCS API reference; confirm them on your version with `logActivity(json_encode($invoice))` the first time. `whinvoicecancelled`, `whinvoicereminder` and `whinvoiceunpaid` generate the same shape for the other invoice events.
 
+## Example: note the client when money goes out through a gateway
+
+1. In `includes/hooks/transactions.php` (with `<?php` on the first line) type `whtransaction` and press Tab. You get an `AddTransaction` hook that loads the transaction with `localAPI('GetTransactions', ...)` inside a `try`, cursor on the next line. WHMCS fires this hook for payments and refunds, and `$vars` already carries `userid`, `gateway`, `amountin`, `amountout` and `fees`.
+2. Refunds have `amountout` above zero. Replace the cursor line with:
+
+```php
+if ((float) $vars['amountout'] > 0) {
+    localAPI('AddClientNote', [
+        'userid' => $vars['userid'],
+        'notes' => 'Refund of ' . $vars['amountout'] . ' sent through ' . $vars['gateway'] . ' (transaction ' . $vars['transid'] . ').',
+    ]);
+}
+```
+
+3. Refund a paid invoice. The note appears on the client's Notes tab; payments (`amountin`) are skipped by the `if`. The `$transactions` lookup the template adds is only needed for fields that are not in `$vars`; delete it if you do not use it. A failure is written to Utilities > Logs > Activity Log as `AddTransaction hook failed: ...` and the transaction is still saved. Keys come from the WHMCS hook reference; confirm on your version with `logActivity(json_encode($vars))` the first time.
+
 ## Troubleshooting: Tab does nothing
 
 - The cursor must be in PHP code: after `<?php`, not in an empty file, an HTML block, a comment or a string. Add `<?php` on the first line and try again.
