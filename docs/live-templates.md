@@ -347,6 +347,22 @@ logActivity('Service #' . $serviceId . ' terminated, usage rows removed.');
 
 3. Terminate a test service (Clients > Products/Services > Module Commands > Terminate). The line shows up in Utilities > Logs > Activity Log and the rows for that service are gone from your table. Use a test service first: `delete()` is permanent. If you would rather keep a history, swap the delete for an `update(['terminated_at' => date('Y-m-d H:i:s')])`. Confirm which keys your WHMCS version sends with `logActivity(json_encode($vars['params']))` the first time.
 
+## Example: record a password change without ever logging the password
+
+1. In `includes/hooks/provisioning.php` (with `<?php` on the first line) type `whmodulechangepassword` and press Tab. You get an `AfterModuleChangePassword` hook with `$serviceId` already read from `$vars['params']['serviceid']` and the cursor on the next line. WHMCS runs it only after the provisioning module's `ChangePassword` function succeeded on the server.
+2. Replace the cursor line with (the table name is yours):
+
+```php
+\WHMCS\Database\Capsule::table('mod_myaddon_audit')->insert([
+    'serviceid' => $serviceId,
+    'event' => 'password_changed',
+    'created_at' => date('Y-m-d H:i:s'),
+]);
+logActivity('Password changed for service #' . $serviceId . ' (value not logged).', 0);
+```
+
+3. Change the password of a test service (Clients > Products/Services > Module Commands > Change Password). The line shows up in Utilities > Logs > Activity Log and one row lands in your table. Never put `$vars['params']['password']` in a log or table: `$vars['params']` carries the new password in clear text, so when you check which keys your WHMCS version sends with `logActivity(json_encode($vars['params']))`, do it once on a test service and delete that line afterwards.
+
 ## Troubleshooting: Tab does nothing
 
 - The cursor must be in PHP code: after `<?php`, not in an empty file, an HTML block, a comment or a string. Add `<?php` on the first line and try again.
