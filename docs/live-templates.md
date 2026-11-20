@@ -210,6 +210,23 @@ logActivity(sprintf(
 3. Register a domain through your registrar module (for example from Clients > Domain Registration > Register). The line shows up under Utilities > Logs > Activity Log. The hook runs only after the registrar reported success; for failures WHMCS fires `AfterRegistrarRegistrationFailed`, which has no template here.
 4. For the other registrar events use `whdomainrenew` and `whdomaintransfer`; they generate the same shape. See the table below.
 
+## Example: record an accepted quote on the client
+
+1. Create `includes/hooks/quotes.php`, type `whquoteaccept` and press Tab. You get an `AcceptQuote` hook that loads the quote with `localAPI('GetQuotes', ...)` inside a `try`, with the cursor on the line after it. WHMCS passes `quoteid` and the new `invoiceid` in `$vars`.
+2. `GetQuotes` answers with a list: the quote you asked for is `$quotes['quotes']['quote'][0]`, with `userid`, `subject` and `total`. Replace the cursor line with:
+
+```php
+$row = $quotes['quotes']['quote'][0] ?? null;
+if ($row) {
+    localAPI('AddClientNote', [
+        'userid' => $row['userid'],
+        'notes' => 'Quote #' . $vars['quoteid'] . ' "' . $row['subject'] . '" accepted, invoice #' . $vars['invoiceid'] . '.',
+    ]);
+}
+```
+
+3. Accept a quote from the client area. The note shows up on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `AcceptQuote hook failed: ...` to Utilities > Logs > Activity Log and the acceptance still goes through. The response shape comes from the WHMCS API reference; check it against your version with `logActivity(json_encode($quotes))` the first time.
+
 ## All abbreviations
 
 | Type + Tab | Generates |
