@@ -57,6 +57,7 @@ Each one is a complete, copyable result built from a live template:
 - [Flag large invoices for review when they are created](docs/live-templates.md#example-flag-large-invoices-for-review-when-they-are-created)
 - [Record why a service was suspended](docs/live-templates.md#example-record-why-a-service-was-suspended)
 - [Note the client when money goes out through a gateway](docs/live-templates.md#example-note-the-client-when-money-goes-out-through-a-gateway)
+- [Warn staff when an order is marked as fraud](docs/live-templates.md#example-warn-staff-when-an-order-is-marked-as-fraud)
 - [Leave a note on the client when an invoice is refunded](docs/live-templates.md#example-leave-a-note-on-the-client-when-an-invoice-is-refunded)
 
 Paid plugin with a 30-day free trial, sold through JetBrains Marketplace.

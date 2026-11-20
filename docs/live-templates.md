@@ -281,6 +281,21 @@ if ((float) $vars['amountout'] > 0) {
 
 3. Refund a paid invoice. The note appears on the client's Notes tab; payments (`amountin`) are skipped by the `if`. The `$transactions` lookup the template adds is only needed for fields that are not in `$vars`; delete it if you do not use it. A failure is written to Utilities > Logs > Activity Log as `AddTransaction hook failed: ...` and the transaction is still saved. Keys come from the WHMCS hook reference; confirm on your version with `logActivity(json_encode($vars))` the first time.
 
+## Example: warn staff when an order is marked as fraud
+
+1. In `includes/hooks/orders.php` (with `<?php` on the first line) type `whorderfraud` and press Tab. You get a `FraudOrder` hook that loads the order with `localAPI('GetOrders', ...)` inside a `try`, cursor on the next line. WHMCS passes `orderid` in `$vars` and runs this hook when someone asks to set the order as fraud, before the status actually changes.
+2. `GetOrders` answers with the order under `orders.order[0]`, and that entry has `userid`. Replace the cursor line with:
+
+```php
+$userId = $order['orders']['order'][0]['userid'] ?? 0;
+localAPI('AddClientNote', [
+    'userid' => $userId,
+    'notes' => 'Order #' . $vars['orderid'] . ' was marked as fraud. Do not provision anything for this client until it is reviewed.',
+]);
+```
+
+3. Open an order (Orders > List All Orders) and use Set as Fraud. The note shows up on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `FraudOrder hook failed: ...` to Utilities > Logs > Activity Log and the status change still goes through. The shape of the `GetOrders` answer comes from the WHMCS API reference; confirm it on your version with `logActivity(json_encode($order))` the first time. `whordercancel`, `whorderpending` and `whorderpaid` generate the same shape for the other order events.
+
 ## Troubleshooting: Tab does nothing
 
 - The cursor must be in PHP code: after `<?php`, not in an empty file, an HTML block, a comment or a string. Add `<?php` on the first line and try again.
