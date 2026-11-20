@@ -227,6 +227,19 @@ if ($row) {
 
 3. Accept a quote from the client area. The note shows up on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `AcceptQuote hook failed: ...` to Utilities > Logs > Activity Log and the acceptance still goes through. The response shape comes from the WHMCS API reference; check it against your version with `logActivity(json_encode($quotes))` the first time.
 
+## Example: flag large invoices for review when they are created
+
+1. Create `includes/hooks/invoices.php`, add `<?php` on the first line, type `whinvoicecreated` and press Tab. You get an `InvoiceCreated` hook that loads the invoice with `localAPI('GetInvoice', ...)` inside a `try`, with the cursor on the line after it. WHMCS passes `invoiceid` in `$vars`.
+2. `GetInvoice` answers with `userid`, `total`, `duedate` and `status` at the top level. Replace the cursor line with:
+
+```php
+if ((float) $invoice['total'] >= 1000) {
+    logActivity('Large invoice #' . $vars['invoiceid'] . ' (' . $invoice['total'] . ', due ' . $invoice['duedate'] . ') created for client #' . $invoice['userid'] . '.');
+}
+```
+
+3. Generate an invoice of 1000 or more (Billing > Create Invoice, then publish it so it leaves Draft). The line shows up in Utilities > Logs > Activity Log. Change `1000` to your own threshold, or swap `logActivity` for `localAPI('AddClientNote', ...)` to keep the flag on the client. If the lookup fails, the `catch` block writes `InvoiceCreated hook failed: ...` to the same log and the invoice is created anyway. Field names come from the WHMCS API reference; confirm them on your version with `logActivity(json_encode($invoice))` the first time.
+
 ## Troubleshooting: Tab does nothing
 
 - The cursor must be in PHP code: after `<?php`, not in an empty file, an HTML block, a comment or a string. Add `<?php` on the first line and try again.

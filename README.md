@@ -54,6 +54,7 @@ Each one is a complete, copyable result built from a live template:
 - [Tag new clients that need a tax ID](docs/live-templates.md#example-tag-new-clients-that-need-a-tax-id)
 - [Log every domain your registrar module registers](docs/live-templates.md#example-log-every-domain-your-registrar-module-registers)
 - [Record an accepted quote on the client](docs/live-templates.md#example-record-an-accepted-quote-on-the-client)
+- [Flag large invoices for review when they are created](docs/live-templates.md#example-flag-large-invoices-for-review-when-they-are-created)
 
 Paid plugin with a 30-day free trial, sold through JetBrains Marketplace.
 
