@@ -175,6 +175,23 @@ if ($row && $row['paymentstatus'] !== 'Paid') {
 3. Accept an unpaid order under Orders > Pending Orders. The note shows up on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `AcceptOrder hook failed: ...` to Utilities > Logs > Activity Log and the acceptance still goes through.
 4. For the other order events use `whorderpaid`, `whordercancel`, `whorderfraud`, `whorderpending` and `whorderaccept`; they generate the same shape. See the table below.
 
+## Example: tag new clients that need a tax ID
+
+1. Create `includes/hooks/clients.php`, type `whclientadd` and press Tab. You get a `ClientAdd` hook that loads the client with `localAPI('GetClientsDetails', ...)` inside a `try`, with the cursor on the line after it. WHMCS already passes `country`, `companyname`, `email` and `client_id` in `$vars`, so you can decide without the lookup.
+2. Replace the cursor line with:
+
+```php
+if ($vars['country'] === 'BR' && $vars['companyname'] === '') {
+    localAPI('AddClientNote', [
+        'userid' => $vars['client_id'],
+        'notes' => 'Brazilian individual: ask for CPF before the first invoice.',
+    ]);
+}
+```
+
+3. Register a test client with country Brazil and no company name. The note shows up on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `ClientAdd hook failed: ...` to Utilities > Logs > Activity Log and the signup still completes.
+4. Misspell a key, for example `$vars['conpanyname']`, and the WHMCS inspection flags it with a quick fix to `companyname`. For other client events use `whclientedit`, `whclientclose` and `whclientpassword`; they generate the same shape. See the table below.
+
 ## All abbreviations
 
 | Type + Tab | Generates |
