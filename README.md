@@ -47,6 +47,7 @@ add_hook('ClientAdd', 1, function (array $vars) {
 - Completion is contextual, not global. `$vars['...']` completes only inside the closure passed to `add_hook()`, `$params['...']` only inside a function named `<module>_<Function>` (for example `acmehost_CreateAccount`), and hook names only inside the quotes of `add_hook('...')`. Outside those places the IDE falls back to normal PHP completion.
 - Press Ctrl+Space inside the quotes or brackets. On macOS that shortcut can be taken by the system input-source switch: change it in System Settings > Keyboard > Keyboard Shortcuts > Input Sources, or use Settings > Keymap > Basic completion in the IDE.
 - Still nothing? Confirm the plugin is enabled (Settings > Plugins > Installed > WHMCS Toolkit) and restart the IDE once, then write to contato@designmaster.com.br with the IDE version (Help > About) and the file you were in.
+
 ## Worked examples
 
 Each one is a complete, copyable result built from a live template:
