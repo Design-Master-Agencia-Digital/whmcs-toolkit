@@ -56,7 +56,7 @@ add_hook('ClientAdd', 1, function (array $vars) {
 
 - The 30-day trial starts on first use and includes every feature; nothing to enter.
 - When the trial ends (or a subscription lapses) completion and inspections stop and the IDE shows a license prompt once per session. Your PHP files are never touched, and the plugin collects no data.
-- Price: US$ 3.90 per month, or US$ 39 per year (one license per developer; the plugin page shows the current price and your local tax). The first 30 days are free.
+- Price: US$ 3.90 per month, or US$ 39 per year (the plugin page shows the current price and your local tax). The first 30 days are free.
 - Buy or renew from the [plugin page](https://plugins.jetbrains.com/plugin/35775-whmcs-toolkit); the license is managed by JetBrains (Settings > Plugins > Installed > WHMCS Toolkit shows its state).
 
 ## Worked examples
