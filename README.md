@@ -14,6 +14,12 @@ Completion and typo detection for WHMCS module and hook development in PhpStorm 
 - Typo inspection: a misspelled hook name never fires and WHMCS gives no error. The plugin flags unknown hook names, API commands, misspelled `$vars` keys inside a hook callback, `$params` keys in provisioning functions, and tables and columns in a `Capsule::table()` query, and offers a one-click fix to the closest valid name.
 - Live templates: 56 abbreviations (full list and a worked example in [docs/live-templates.md](docs/live-templates.md)). Type `whmodule`, `whaddon`, `whhook` or `whapi` and press Tab for a provisioning module, addon module, hook or localAPI call skeleton, named after the file (e.g. `acmehost.php` gives `acmehost_CreateAccount`).
 
+## Screenshots
+
+![Hook names completed inside add_hook()](screenshots/hook-name-completion.png)
+![Module $params keys completed in a provisioning function](screenshots/params-completion.png)
+![Quick Documentation for a localAPI command](screenshots/api-command-docs.png)
+
 ## Getting started
 
 1. In PhpStorm, open Settings > Plugins > Marketplace, search for "WHMCS Toolkit" and install it ([plugin page](https://plugins.jetbrains.com/plugin/35775-whmcs-toolkit)). The 30-day trial starts on first use.
