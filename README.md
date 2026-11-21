@@ -50,33 +50,41 @@ add_hook('ClientAdd', 1, function (array $vars) {
 
 ## Worked examples
 
-Each one is a complete, copyable result built from a live template:
+Each one is a complete, copyable result built from a live template. Pick by what you are building:
+
+**Reacting to WHMCS events (hooks)**
 
 - [Do something when an invoice is paid](docs/live-templates.md#example-do-something-when-an-invoice-is-paid)
-- [A provisioning module in one minute](docs/live-templates.md#example-a-provisioning-module-in-one-minute)
-- [A payment gateway in two files](docs/live-templates.md#example-a-payment-gateway-in-two-files)
-- [Show a custom value in the client area](docs/live-templates.md#example-show-a-custom-value-in-the-client-area)
-- [Catch a typo before WHMCS silently ignores it](docs/live-templates.md#example-catch-a-typo-before-whmcs-silently-ignores-it)
-- [Query the WHMCS database without guessing column names](docs/live-templates.md#example-query-the-whmcs-database-without-guessing-column-names)
-- [An addon module with an admin page](docs/live-templates.md#example-an-addon-module-with-an-admin-page)
-- [A domain registrar module in one minute](docs/live-templates.md#example-a-domain-registrar-module-in-one-minute)
-- [Block an order at checkout](docs/live-templates.md#example-block-an-order-at-checkout)
-- [A daily job that never breaks the cron](docs/live-templates.md#example-a-daily-job-that-never-breaks-the-cron)
-- [Flag an urgent ticket for staff when it is opened](docs/live-templates.md#example-flag-an-urgent-ticket-for-staff-when-it-is-opened)
-- [Leave a note on the client when an order is accepted](docs/live-templates.md#example-leave-a-note-on-the-client-when-an-order-is-accepted)
-- [Tag new clients that need a tax ID](docs/live-templates.md#example-tag-new-clients-that-need-a-tax-id)
-- [Log every domain your registrar module registers](docs/live-templates.md#example-log-every-domain-your-registrar-module-registers)
-- [Record an accepted quote on the client](docs/live-templates.md#example-record-an-accepted-quote-on-the-client)
 - [Flag large invoices for review when they are created](docs/live-templates.md#example-flag-large-invoices-for-review-when-they-are-created)
-- [Record why a service was suspended](docs/live-templates.md#example-record-why-a-service-was-suspended)
-- [Note the client when money goes out through a gateway](docs/live-templates.md#example-note-the-client-when-money-goes-out-through-a-gateway)
-- [Warn staff when an order is marked as fraud](docs/live-templates.md#example-warn-staff-when-an-order-is-marked-as-fraud)
-- [Note the client when a late fee is added](docs/live-templates.md#example-note-the-client-when-a-late-fee-is-added)
 - [Leave a note on the client when an invoice is refunded](docs/live-templates.md#example-leave-a-note-on-the-client-when-an-invoice-is-refunded)
-- [Clean up your own data when a service is terminated](docs/live-templates.md#example-clean-up-your-own-data-when-a-service-is-terminated)
+- [Note the client when a late fee is added](docs/live-templates.md#example-note-the-client-when-a-late-fee-is-added)
+- [Note the client when money goes out through a gateway](docs/live-templates.md#example-note-the-client-when-money-goes-out-through-a-gateway)
+- [Block an order at checkout](docs/live-templates.md#example-block-an-order-at-checkout)
+- [Leave a note on the client when an order is accepted](docs/live-templates.md#example-leave-a-note-on-the-client-when-an-order-is-accepted)
+- [Warn staff when an order is marked as fraud](docs/live-templates.md#example-warn-staff-when-an-order-is-marked-as-fraud)
+- [Tag new clients that need a tax ID](docs/live-templates.md#example-tag-new-clients-that-need-a-tax-id)
+- [Record an accepted quote on the client](docs/live-templates.md#example-record-an-accepted-quote-on-the-client)
+- [Flag an urgent ticket for staff when it is opened](docs/live-templates.md#example-flag-an-urgent-ticket-for-staff-when-it-is-opened)
 - [Raise a ticket's priority when the client replies "urgent"](docs/live-templates.md#example-raise-a-tickets-priority-when-the-client-replies-urgent)
+- [A daily job that never breaks the cron](docs/live-templates.md#example-a-daily-job-that-never-breaks-the-cron)
+- [Catch a typo before WHMCS silently ignores it](docs/live-templates.md#example-catch-a-typo-before-whmcs-silently-ignores-it)
+
+**Writing modules**
+
+- [A provisioning module in one minute](docs/live-templates.md#example-a-provisioning-module-in-one-minute)
+- [Record why a service was suspended](docs/live-templates.md#example-record-why-a-service-was-suspended)
 - [Log a service's new package after an upgrade](docs/live-templates.md#example-log-a-services-new-package-after-an-upgrade)
 - [Record a password change without ever logging the password](docs/live-templates.md#example-record-a-password-change-without-ever-logging-the-password)
+- [Clean up your own data when a service is terminated](docs/live-templates.md#example-clean-up-your-own-data-when-a-service-is-terminated)
+- [A domain registrar module in one minute](docs/live-templates.md#example-a-domain-registrar-module-in-one-minute)
+- [Log every domain your registrar module registers](docs/live-templates.md#example-log-every-domain-your-registrar-module-registers)
+- [A payment gateway in two files](docs/live-templates.md#example-a-payment-gateway-in-two-files)
+- [An addon module with an admin page](docs/live-templates.md#example-an-addon-module-with-an-admin-page)
+
+**Client area and database**
+
+- [Show a custom value in the client area](docs/live-templates.md#example-show-a-custom-value-in-the-client-area)
+- [Query the WHMCS database without guessing column names](docs/live-templates.md#example-query-the-whmcs-database-without-guessing-column-names)
 
 Paid plugin with a 30-day free trial, sold through JetBrains Marketplace.
 
