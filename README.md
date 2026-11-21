@@ -44,6 +44,7 @@ add_hook('ClientAdd', 1, function (array $vars) {
 ## Requirements and when nothing shows up
 
 - PhpStorm 2025.3 or newer, or IntelliJ IDEA Ultimate 2025.3+ with the PHP plugin enabled (Settings > Plugins > Installed > PHP). The plugin depends on the PHP plugin and does not load without it.
+- The reference data (hooks, `$vars`, localAPI commands, tables) comes from the official WHMCS developer documentation for WHMCS 8.x and 9.x, with the database schema of WHMCS 9.0. It is bundled in the plugin, so everything works offline and no WHMCS install or credentials are needed.
 - Completion is contextual, not global. `$vars['...']` completes only inside the closure passed to `add_hook()`, `$params['...']` only inside a function named `<module>_<Function>` (for example `acmehost_CreateAccount`), and hook names only inside the quotes of `add_hook('...')`. Outside those places the IDE falls back to normal PHP completion.
 - Press Ctrl+Space inside the quotes or brackets. On macOS that shortcut can be taken by the system input-source switch: change it in System Settings > Keyboard > Keyboard Shortcuts > Input Sources, or use Settings > Keymap > Basic completion in the IDE.
 - Still nothing? Confirm the plugin is enabled (Settings > Plugins > Installed > WHMCS Toolkit) and restart the IDE once, then write to contato@designmaster.com.br with the IDE version (Help > About) and the file you were in.
