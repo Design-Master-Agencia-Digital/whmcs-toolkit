@@ -74,6 +74,9 @@ Each one is a complete, copyable result built from a live template:
 - [Note the client when a late fee is added](docs/live-templates.md#example-note-the-client-when-a-late-fee-is-added)
 - [Leave a note on the client when an invoice is refunded](docs/live-templates.md#example-leave-a-note-on-the-client-when-an-invoice-is-refunded)
 - [Clean up your own data when a service is terminated](docs/live-templates.md#example-clean-up-your-own-data-when-a-service-is-terminated)
+- [Raise a ticket's priority when the client replies "urgent"](docs/live-templates.md#example-raise-a-tickets-priority-when-the-client-replies-urgent)
+- [Log a service's new package after an upgrade](docs/live-templates.md#example-log-a-services-new-package-after-an-upgrade)
+- [Record a password change without ever logging the password](docs/live-templates.md#example-record-a-password-change-without-ever-logging-the-password)
 
 Paid plugin with a 30-day free trial, sold through JetBrains Marketplace.
 
