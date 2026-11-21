@@ -48,6 +48,12 @@ add_hook('ClientAdd', 1, function (array $vars) {
 - Press Ctrl+Space inside the quotes or brackets. On macOS that shortcut can be taken by the system input-source switch: change it in System Settings > Keyboard > Keyboard Shortcuts > Input Sources, or use Settings > Keymap > Basic completion in the IDE.
 - Still nothing? Confirm the plugin is enabled (Settings > Plugins > Installed > WHMCS Toolkit) and restart the IDE once, then write to contato@designmaster.com.br with the IDE version (Help > About) and the file you were in.
 
+## Trial and license
+
+- The 30-day trial starts on first use and includes every feature; nothing to enter.
+- When the trial ends (or a subscription lapses) completion and inspections stop and the IDE shows a license prompt once per session. Your PHP files are never touched, and the plugin collects no data.
+- Buy or renew from the [plugin page](https://plugins.jetbrains.com/plugin/35775-whmcs-toolkit); the license is managed by JetBrains (Settings > Plugins > Installed > WHMCS Toolkit shows its state).
+
 ## Worked examples
 
 Each one is a complete, copyable result built from a live template. Pick by what you are building:
