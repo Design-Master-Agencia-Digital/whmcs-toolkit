@@ -20,6 +20,7 @@ Completion and typo detection for WHMCS module and hook development in PhpStorm 
 ![The keys of $vars completed inside an add_hook() callback, with their types](screenshots/hook-vars-completion.png)
 ![Module $params keys completed in a provisioning function](screenshots/params-completion.png)
 ![Missing required localAPI parameter reported before runtime](screenshots/missing-parameter-inspection.png)
+![A misspelled hook name flagged as unknown (Alt+Enter offers the closest valid name)](screenshots/unknown-hook-inspection.png)
 ![Quick Documentation for a localAPI command](screenshots/api-command-docs.png)
 
 ## Getting started
