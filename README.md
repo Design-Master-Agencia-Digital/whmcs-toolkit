@@ -17,6 +17,7 @@ Completion and typo detection for WHMCS module and hook development in PhpStorm 
 ## Screenshots
 
 ![Hook names completed inside add_hook()](screenshots/hook-name-completion.png)
+![The keys of $vars completed inside an add_hook() callback, with their types](screenshots/hook-vars-completion.png)
 ![Module $params keys completed in a provisioning function](screenshots/params-completion.png)
 ![Quick Documentation for a localAPI command](screenshots/api-command-docs.png)
 
