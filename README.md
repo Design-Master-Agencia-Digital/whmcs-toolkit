@@ -41,6 +41,12 @@ add_hook('ClientAdd', 1, function (array $vars) {
 - Add `localAPI('AddClient', ['firstname' => 'Ana']);` inside the closure: the plugin underlines the call and lists the required parameters still missing (`lastname`, `email`, `address1`...), which WHMCS would only report at runtime.
 - In `modules/servers/acmehost/acmehost.php`, type `whmodule` + Tab for a full provisioning module named `acmehost_*`.
 
+## Requirements and when nothing shows up
+
+- PhpStorm 2025.3 or newer, or IntelliJ IDEA Ultimate 2025.3+ with the PHP plugin enabled (Settings > Plugins > Installed > PHP). The plugin depends on the PHP plugin and does not load without it.
+- Completion is contextual, not global. `$vars['...']` completes only inside the closure passed to `add_hook()`, `$params['...']` only inside a function named `<module>_<Function>` (for example `acmehost_CreateAccount`), and hook names only inside the quotes of `add_hook('...')`. Outside those places the IDE falls back to normal PHP completion.
+- Press Ctrl+Space inside the quotes or brackets. On macOS that shortcut can be taken by the system input-source switch: change it in System Settings > Keyboard > Keyboard Shortcuts > Input Sources, or use Settings > Keymap > Basic completion in the IDE.
+- Still nothing? Confirm the plugin is enabled (Settings > Plugins > Installed > WHMCS Toolkit) and restart the IDE once, then write to contato@designmaster.com.br with the IDE version (Help > About) and the file you were in.
 ## Worked examples
 
 Each one is a complete, copyable result built from a live template:
