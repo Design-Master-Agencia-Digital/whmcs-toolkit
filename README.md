@@ -16,6 +16,8 @@ WHMCS autocomplete (code completion) and typo detection for module and hook deve
 
 ## Screenshots
 
+![Tour: hook names, $vars, $params, inspections and quick docs (animated, 6 steps)](screenshots/whmcs-toolkit-tour.gif)
+
 ![Hook names completed inside add_hook()](screenshots/hook-name-completion.png)
 ![The keys of $vars completed inside an add_hook() callback, with their types](screenshots/hook-vars-completion.png)
 ![Module $params keys completed in a provisioning function](screenshots/params-completion.png)
