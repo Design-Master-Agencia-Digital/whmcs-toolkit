@@ -29,7 +29,7 @@ WHMCS autocomplete (code completion) and typo detection for module and hook deve
 
 1. In PhpStorm, open Settings > Plugins > Marketplace, search for "WHMCS Toolkit" and install it ([plugin page](https://plugins.jetbrains.com/plugin/35775-whmcs-toolkit)). The 30-day trial starts on first use.
 2. Open your WHMCS module or hooks folder. Nothing to configure: the plugin works in any PHP file.
-3. Try it:
+3. Try it. In a new empty file, write `<?php` on the first line and press Enter first: the templates only expand inside PHP code, so in a blank file Tab does nothing.
 
 ```php
 // includes/hooks/welcome.php: type whhook + Tab, then Ctrl+Space inside the quotes
