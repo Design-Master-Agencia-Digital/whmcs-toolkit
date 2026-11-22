@@ -1,6 +1,6 @@
 # WHMCS Toolkit for PhpStorm
 
-Completion and typo detection for WHMCS module and hook development in PhpStorm (and IntelliJ IDEA Ultimate with the PHP plugin).
+WHMCS autocomplete (code completion) and typo detection for module and hook development in PhpStorm (and IntelliJ IDEA Ultimate with the PHP plugin).
 
 - Hook names inside `add_hook('...')`: all 334 WHMCS hook points, with what each one does.
 - Hook variables: keys of `$vars['...']` inside the hook closure, with their types.
