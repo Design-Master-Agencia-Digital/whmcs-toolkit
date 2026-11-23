@@ -472,6 +472,31 @@ if (trim($client['phonenumber'] ?? '') === '') {
 
 3. Open a client in Clients > View/Search Clients, clear the Phone Number field and click Save Changes. The note appears on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `ClientEdit hook failed: ...` to Utilities > Logs > Activity Log and the save still goes through. Confirm the field names on your version with `logActivity(json_encode($client))` the first time. Saving again with the phone empty adds another note, so keep the check if you only want one.
 
+## Example: note the client when a payment reminder goes out
+
+1. In `includes/hooks/invoices.php` (with `<?php` on the first line) type `whinvoicereminder` and press Tab. You get an `InvoicePaymentReminder` hook that loads the invoice with `localAPI('GetInvoice', ...)` inside a `try`, cursor on the next line. WHMCS passes `invoiceid` in `$vars`.
+2. `GetInvoice` answers with `userid`, `duedate` and `balance` at the top level. Replace the cursor line with:
+
+```php
+localAPI('AddClientNote', [
+    'userid' => $invoice['userid'],
+    'notes' => 'Payment reminder sent for invoice #' . $vars['invoiceid'] . ' (due ' . $invoice['duedate'] . ', balance ' . $invoice['balance'] . ').',
+]);
+```
+
+3. Wait for the daily cron to send a reminder (or run `php -q crons/cron.php` with an invoice due soon). The note appears on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `InvoicePaymentReminder hook failed: ...` to Utilities > Logs > Activity Log and the reminder still goes out. Confirm the field names on your version with `logActivity(json_encode($invoice))` the first time.
+
+## Example: note the client when the account is closed
+
+1. In `includes/hooks/clients.php` (with `<?php` on the first line) type `whclientclose` and press Tab. You get a `ClientClose` hook that loads the client with `localAPI('GetClientsDetails', ...)` inside a `try`, cursor on the next line. WHMCS passes `userid` in `$vars`.
+2. Replace the cursor line with:
+
+```php
+logActivity('Client #' . $vars['userid'] . ' (' . ($client['email'] ?? 'no email') . ') was closed.');
+```
+
+3. Open a client, change Status to Closed and click Save Changes (or use the Close Clients Account action). The line appears in Utilities > Logs > Activity Log. If the lookup fails, the `catch` block writes `ClientClose hook failed: ...` there and the close still goes through. Confirm the field names on your version with `logActivity(json_encode($client))` the first time.
+
 ## Troubleshooting: Tab does nothing
 
 - The cursor must be in PHP code: after `<?php`, not in an empty file, an HTML block, a comment or a string. Add `<?php` on the first line and try again.
