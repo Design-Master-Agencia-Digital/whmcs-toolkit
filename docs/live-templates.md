@@ -497,6 +497,37 @@ logActivity('Client #' . $vars['userid'] . ' (' . ($client['email'] ?? 'no email
 
 3. Open a client, change Status to Closed and click Save Changes (or use the Close Clients Account action). The line appears in Utilities > Logs > Activity Log. If the lookup fails, the `catch` block writes `ClientClose hook failed: ...` there and the close still goes through. Confirm the field names on your version with `logActivity(json_encode($client))` the first time.
 
+## Example: note the client when a new order is waiting for review
+
+1. In `includes/hooks/orders.php` (with `<?php` on the first line) type `whorderpending` and press Tab. You get a `PendingOrder` hook that loads the order with `localAPI('GetOrders', ...)` inside a `try`, cursor on the next line. WHMCS passes `orderid` in `$vars` and runs this hook when an order is placed and lands as Pending.
+2. `GetOrders` answers with the order under `orders.order[0]`, with `userid`, `amount` and `paymentmethod`. Replace the cursor line with:
+
+```php
+$row = $order['orders']['order'][0] ?? null;
+if ($row) {
+    localAPI('AddClientNote', [
+        'userid' => $row['userid'],
+        'notes' => 'Order #' . $vars['orderid'] . ' is pending review (' . $row['amount'] . ' via ' . $row['paymentmethod'] . ').',
+    ]);
+}
+```
+
+3. Place a test order from the client area. The note shows up on the client's Notes tab and the order waits under Orders > Pending Orders. If the lookup or the note fails, the `catch` block writes `PendingOrder hook failed: ...` to Utilities > Logs > Activity Log and the order is still created. Confirm the field names on your version with `logActivity(json_encode($order))` the first time.
+
+## Example: note the client when an invoice goes unpaid
+
+1. In `includes/hooks/invoices.php` (with `<?php` on the first line) type `whinvoiceunpaid` and press Tab. You get an `InvoiceUnpaid` hook that loads the invoice with `localAPI('GetInvoice', ...)` inside a `try`, cursor on the next line. WHMCS passes `invoiceid` in `$vars` and runs this hook when an invoice is set back to Unpaid.
+2. `GetInvoice` answers with `userid` and `balance` at the top level. Replace the cursor line with:
+
+```php
+localAPI('AddClientNote', [
+    'userid' => $invoice['userid'],
+    'notes' => 'Invoice #' . $vars['invoiceid'] . ' is unpaid again (balance ' . $invoice['balance'] . ').',
+]);
+```
+
+3. Open a paid invoice, click Mark Unpaid. The note shows up on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `InvoiceUnpaid hook failed: ...` to Utilities > Logs > Activity Log and the status change still goes through. Confirm the field names on your version with `logActivity(json_encode($invoice))` the first time.
+
 ## Troubleshooting: Tab does nothing
 
 - The cursor must be in PHP code: after `<?php`, not in an empty file, an HTML block, a comment or a string. Add `<?php` on the first line and try again.
