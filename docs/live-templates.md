@@ -363,6 +363,19 @@ logActivity('Password changed for service #' . $serviceId . ' (value not logged)
 
 3. Change the password of a test service (Clients > Products/Services > Module Commands > Change Password). The line shows up in Utilities > Logs > Activity Log and one row lands in your table. Never put `$vars['params']['password']` in a log or table: `$vars['params']` carries the new password in clear text, so when you check which keys your WHMCS version sends with `logActivity(json_encode($vars['params']))`, do it once on a test service and delete that line afterwards.
 
+## Example: add a Sync button and an extra field to your module's service page
+
+1. Open your provisioning module file (for example `modules/servers/acme/acme.php`, created with `whmodule`). The templates take the function prefix from the file name, so the file must be named after the module.
+2. Type `whmodulebutton` and press Tab. You get `acme_AdminCustomButtonArray()` returning `['Sync' => 'Sync']` and the `acme_Sync(array $params)` function it runs, inside a `try` with the cursor on the line after it. Replace the cursor line with the call to your provider (`acme_api` stands for your own HTTP helper):
+
+```php
+$remote = acme_api($params, 'GET', '/accounts/' . $params['serviceid']);
+```
+
+3. Open a service of that module in the admin area (Clients > Products/Services). The Sync button sits next to Create, Suspend and Terminate. Returning `'success'` shows the green message; any other string is shown as the error, and the `catch` also writes the failure to Utilities > Logs > Module Log through `logModuleCall`.
+4. Type `whmoduleadmintab` and press Tab for `acme_AdminServicesTabFields` and `acme_AdminServicesTabFieldsSave`: an extra input on the same page, saved when staff click Save Changes. The first field reads the `Remote ID` product custom field; rename it or drop the `customfields` lookup if you store the value elsewhere. The save function receives the typed value in `$_POST['modulefields'][0]`.
+5. Type `whmoduletest` and press Tab for `acme_TestConnection`, the function behind the Test Connection button on the server page (Configuration > System Settings > Servers). Replace the cursor line with a cheap authenticated call; it returns `['success' => true]` when the call does not throw, or the exception message as `error`.
+
 ## Troubleshooting: Tab does nothing
 
 - The cursor must be in PHP code: after `<?php`, not in an empty file, an HTML block, a comment or a string. Add `<?php` on the first line and try again.
@@ -430,3 +443,6 @@ logActivity('Password changed for service #' . $serviceId . ' (value not logged)
 | `whtransaction` | AddTransaction hook that loads the transaction through localAPI GetTransactions with a failure log |
 | `whserviceaddon` | AddonActivated hook that loads the service addons through localAPI GetClientsAddons with a failure log |
 | `whquoteaccept` | AcceptQuote hook that loads the quote through localAPI GetQuotes with a failure log |
+| `whmoduletest` | provisioning module TestConnection function behind the Test Connection button on the server page |
+| `whmoduleadmintab` | provisioning module AdminServicesTabFields and AdminServicesTabFieldsSave: an extra field on the service admin page |
+| `whmodulebutton` | provisioning module custom admin button (AdminCustomButtonArray) with the function it runs |
