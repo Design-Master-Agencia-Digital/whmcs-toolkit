@@ -422,6 +422,23 @@ foreach ($addons['addons']['addon'] ?? [] as $addon) {
 
 3. Activate an addon (Clients > Products/Services > Addons, or accept the order that contains it). The note appears on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `AddonActivated hook failed: ...` to Utilities > Logs > Activity Log and the activation is still saved. Confirm the field names on your version with `logActivity(json_encode($addons))` the first time.
 
+## Example: note the client when an admin saves a suspended service
+
+1. In `includes/hooks/services.php` (with `<?php` on the first line) type `whserviceedit` and press Tab. You get a `ServiceEdit` hook that loads the service with `localAPI('GetClientsProducts', ...)` inside a `try`, cursor on the next line. WHMCS passes `userid` and `serviceid` in `$vars`.
+2. `GetClientsProducts` returns the service under `products.product[0]`. Replace the cursor line with:
+
+```php
+$product = $service['products']['product'][0] ?? null;
+if ($product && $product['status'] === 'Suspended') {
+    localAPI('AddClientNote', [
+        'userid' => $vars['userid'],
+        'notes' => 'Service #' . $vars['serviceid'] . ' (' . $product['name'] . ') was saved while Suspended.',
+    ]);
+}
+```
+
+3. Open a service in Clients > Products/Services, set the status to Suspended and click Save Changes. The note appears on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `ServiceEdit hook failed: ...` to Utilities > Logs > Activity Log and the save still goes through. Confirm the field names on your version with `logActivity(json_encode($service))` the first time.
+
 ## Troubleshooting: Tab does nothing
 
 - The cursor must be in PHP code: after `<?php`, not in an empty file, an HTML block, a comment or a string. Add `<?php` on the first line and try again.
