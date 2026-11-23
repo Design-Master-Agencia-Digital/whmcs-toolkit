@@ -552,6 +552,23 @@ localAPI('AddClientNote', [
 - Check Settings > Editor > Live Templates > WHMCS: the group must be ticked, and each template must list PHP under its applicable contexts.
 - Completion and typo inspection (Ctrl+Space, Alt+Enter) need the PHP plugin, which PhpStorm bundles and IntelliJ IDEA Ultimate needs installed from Settings > Plugins.
 
+## Example: lower a High priority ticket once staff answer it
+
+1. In `includes/hooks/tickets.php`, type `whticketreply` and press Tab. You get a `TicketAdminReply` hook that already loads the ticket with `localAPI('GetTicket', ...)` inside a `try`, with the cursor on the line after it.
+2. `$vars` carries `ticketid`, `replyid`, `deptid`, `deptname`, `subject`, `message`, `priority`, `admin` and `status`, so the rule needs no extra call. Replace the cursor line with:
+
+```php
+if ($vars['priority'] === 'High') {
+    localAPI('UpdateTicket', [
+        'ticketid' => $vars['ticketid'],
+        'priority' => 'Medium',
+    ]);
+}
+```
+
+3. Reply to a High priority ticket from the admin area (Support > Tickets). After the reply is saved, the ticket list shows Medium. If the call fails, the `catch` block writes `TicketAdminReply hook failed: ...` to Utilities > Logs > Activity Log and the reply is still sent.
+4. Changing the priority fires `TicketPriorityChange` (`whticketpriority`), not `TicketAdminReply` again, so the rule cannot loop. If the client answers and the ticket should go back up, pair it with `whticketuser` (`TicketUserReply`) and set `'priority' => 'High'` there.
+
 ## All abbreviations
 
 | Type + Tab | Generates |
