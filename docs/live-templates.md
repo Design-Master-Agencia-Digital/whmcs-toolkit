@@ -279,6 +279,23 @@ if (stripos($vars['message'], 'escalate') !== false) {
 3. Open a ticket in the admin area, add a staff note that contains the word "escalate", and reload the ticket: its priority is High. If the call fails, the `catch` block writes `TicketAddNote hook failed: ...` to Utilities > Logs > Activity Log and the note is still saved.
 4. Changing the priority fires `TicketPriorityChange` (`whticketpriority`), not `TicketAddNote` again, so the rule cannot loop. The same shape works for `whticketsubject` (subject edited), `whticketflag` (ticket flagged to a staff member) and `whticketopenadmin` (staff opened the ticket for a client).
 
+## Example: leave a staff note when a ticket goes On Hold
+
+1. In `includes/hooks/tickets.php`, type `whticketstatus` and press Tab. You get a `TicketStatusChange` hook that already loads the ticket with `localAPI('GetTicket', ...)` inside a `try`, with the cursor on the line after it.
+2. `$vars` carries `ticketid`, `status` (the new status name) and `adminid`, so the rule needs no extra call. Replace the cursor line with:
+
+```php
+if ($vars['status'] === 'On Hold') {
+    localAPI('AddTicketNote', [
+        'ticketid' => $vars['ticketid'],
+        'message' => 'Put On Hold: say what we are waiting for before you leave it.',
+    ]);
+}
+```
+
+3. Open a ticket in the admin area, set the status to On Hold and save. The staff-only note appears in the ticket. If the call fails, the `catch` block writes `TicketStatusChange hook failed: ...` to Utilities > Logs > Activity Log and the status change still goes through.
+4. Adding a note fires `TicketAddNote`, not `TicketStatusChange`, so the rule cannot loop. The status name is the text shown in the admin area; if you renamed a status, compare against your name. `whticketdept` (department moved) generates the same shape with `deptid` and `deptname` in `$vars`.
+
 ## Example: leave a note on the client when an invoice is refunded
 
 1. Create `includes/hooks/invoices.php` (or reuse it), make sure `<?php` is on the first line, type `whinvoicerefunded` and press Tab. You get an `InvoiceRefunded` hook that loads the invoice with `localAPI('GetInvoice', ...)` inside a `try`, with the cursor on the line after it. WHMCS passes `invoiceid` in `$vars`.
