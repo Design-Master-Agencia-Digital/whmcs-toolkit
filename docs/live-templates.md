@@ -456,6 +456,22 @@ if ($row && $row['status'] === 'Expired') {
 
 3. Open a domain in Clients > Domains, set the status to Expired and click Save Changes. The note appears on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `DomainEdit hook failed: ...` to Utilities > Logs > Activity Log and the save still goes through. Confirm the field names on your version with `logActivity(json_encode($domain))` the first time.
 
+## Example: note the client when it is saved without a phone number
+
+1. In `includes/hooks/clients.php` (with `<?php` on the first line) type `whclientedit` and press Tab. You get a `ClientEdit` hook that loads the client with `localAPI('GetClientsDetails', ...)` inside a `try`, cursor on the next line. WHMCS passes `userid` in `$vars`.
+2. `GetClientsDetails` returns the profile fields at the top level of the answer. Replace the cursor line with:
+
+```php
+if (trim($client['phonenumber'] ?? '') === '') {
+    localAPI('AddClientNote', [
+        'userid' => $vars['userid'],
+        'notes' => 'Profile saved without a phone number. Ask for one before the next renewal.',
+    ]);
+}
+```
+
+3. Open a client in Clients > View/Search Clients, clear the Phone Number field and click Save Changes. The note appears on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `ClientEdit hook failed: ...` to Utilities > Logs > Activity Log and the save still goes through. Confirm the field names on your version with `logActivity(json_encode($client))` the first time. Saving again with the phone empty adds another note, so keep the check if you only want one.
+
 ## Troubleshooting: Tab does nothing
 
 - The cursor must be in PHP code: after `<?php`, not in an empty file, an HTML block, a comment or a string. Add `<?php` on the first line and try again.
