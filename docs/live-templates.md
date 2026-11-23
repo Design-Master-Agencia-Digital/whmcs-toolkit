@@ -390,6 +390,20 @@ $remote = acme_api($params, 'GET', '/accounts/' . $params['serviceid']);
 4. Type `whmoduleadmintab` and press Tab for `acme_AdminServicesTabFields` and `acme_AdminServicesTabFieldsSave`: an extra input on the same page, saved when staff click Save Changes. The first field reads the `Remote ID` product custom field; rename it or drop the `customfields` lookup if you store the value elsewhere. The save function receives the typed value in `$_POST['modulefields'][0]`.
 5. Type `whmoduletest` and press Tab for `acme_TestConnection`, the function behind the Test Connection button on the server page (Configuration > System Settings > Servers). Replace the cursor line with a cheap authenticated call; it returns `['success' => true]` when the call does not throw, or the exception message as `error`.
 
+## Example: note the client when an invoice is paid
+
+1. In `includes/hooks/invoices.php` (with `<?php` on the first line) type `whinvoicepayment` and press Tab. You get an `AddInvoicePayment` hook that loads the invoice with `localAPI('GetInvoice', ...)` inside a `try`, cursor on the next line. WHMCS passes `invoiceid` in `$vars` right after a payment is applied to the invoice.
+2. `GetInvoice` answers with `userid`, `total` and `paymentmethod`. Replace the cursor line with:
+
+```php
+localAPI('AddClientNote', [
+    'userid' => $invoice['userid'],
+    'notes' => 'Invoice #' . $vars['invoiceid'] . ' paid (' . $invoice['total'] . ' through ' . $invoice['paymentmethod'] . ').',
+]);
+```
+
+3. Pay an invoice (Billing > Invoices > Add Payment, or let a gateway callback pay it). The note appears on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `AddInvoicePayment hook failed: ...` to Utilities > Logs > Activity Log and the payment is still saved. Field names come from the WHMCS API reference; confirm them on your version with `logActivity(json_encode($invoice))` the first time. `whinvoicelatefee` and `whinvoicetotal` generate the same shape for the other invoice events.
+
 ## Troubleshooting: Tab does nothing
 
 - The cursor must be in PHP code: after `<?php`, not in an empty file, an HTML block, a comment or a string. Add `<?php` on the first line and try again.
