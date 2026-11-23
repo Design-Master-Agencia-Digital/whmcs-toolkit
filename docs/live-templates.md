@@ -439,6 +439,23 @@ if ($product && $product['status'] === 'Suspended') {
 
 3. Open a service in Clients > Products/Services, set the status to Suspended and click Save Changes. The note appears on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `ServiceEdit hook failed: ...` to Utilities > Logs > Activity Log and the save still goes through. Confirm the field names on your version with `logActivity(json_encode($service))` the first time.
 
+## Example: note the client when an admin saves an expired domain
+
+1. In `includes/hooks/domains.php` (with `<?php` on the first line) type `whdomainedit` and press Tab. You get a `DomainEdit` hook that loads the domain with `localAPI('GetClientsDomains', ...)` inside a `try`, cursor on the next line. WHMCS passes `userid` and `domainid` in `$vars`.
+2. `GetClientsDomains` returns the domain under `domains.domain[0]`. Replace the cursor line with:
+
+```php
+$row = $domain['domains']['domain'][0] ?? null;
+if ($row && $row['status'] === 'Expired') {
+    localAPI('AddClientNote', [
+        'userid' => $vars['userid'],
+        'notes' => 'Domain ' . $row['domainname'] . ' was saved while Expired (expiry ' . $row['expirydate'] . ').',
+    ]);
+}
+```
+
+3. Open a domain in Clients > Domains, set the status to Expired and click Save Changes. The note appears on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `DomainEdit hook failed: ...` to Utilities > Logs > Activity Log and the save still goes through. Confirm the field names on your version with `logActivity(json_encode($domain))` the first time.
+
 ## Troubleshooting: Tab does nothing
 
 - The cursor must be in PHP code: after `<?php`, not in an empty file, an HTML block, a comment or a string. Add `<?php` on the first line and try again.
