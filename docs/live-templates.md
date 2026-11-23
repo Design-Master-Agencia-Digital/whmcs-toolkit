@@ -404,6 +404,24 @@ localAPI('AddClientNote', [
 
 3. Pay an invoice (Billing > Invoices > Add Payment, or let a gateway callback pay it). The note appears on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `AddInvoicePayment hook failed: ...` to Utilities > Logs > Activity Log and the payment is still saved. Field names come from the WHMCS API reference; confirm them on your version with `logActivity(json_encode($invoice))` the first time. `whinvoicelatefee` and `whinvoicetotal` generate the same shape for the other invoice events.
 
+## Example: note the client when an addon is activated
+
+1. In `includes/hooks/addons.php` (with `<?php` on the first line) type `whserviceaddon` and press Tab. You get an `AddonActivated` hook that loads the addons of the service with `localAPI('GetClientsAddons', ...)` inside a `try`, cursor on the next line. WHMCS passes `id` (the addon row), `userid`, `serviceid` and `addonid` in `$vars`.
+2. `GetClientsAddons` lists every addon of that service under `addons.addon`. Replace the cursor line with:
+
+```php
+foreach ($addons['addons']['addon'] ?? [] as $addon) {
+    if ((int) $addon['id'] === (int) $vars['id']) {
+        localAPI('AddClientNote', [
+            'userid' => $vars['userid'],
+            'notes' => 'Addon "' . $addon['name'] . '" activated on service #' . $vars['serviceid'] . '.',
+        ]);
+    }
+}
+```
+
+3. Activate an addon (Clients > Products/Services > Addons, or accept the order that contains it). The note appears on the client's Notes tab. If the lookup or the note fails, the `catch` block writes `AddonActivated hook failed: ...` to Utilities > Logs > Activity Log and the activation is still saved. Confirm the field names on your version with `logActivity(json_encode($addons))` the first time.
+
 ## Troubleshooting: Tab does nothing
 
 - The cursor must be in PHP code: after `<?php`, not in an empty file, an HTML block, a comment or a string. Add `<?php` on the first line and try again.
