@@ -265,6 +265,20 @@ if ($vars['priority'] !== 'High' && stripos($vars['message'], 'urgent') !== fals
 3. Reply to an open Low priority ticket as a client with the word "urgent" in the message. The ticket shows High under Support > Tickets. If the call fails, the `catch` block writes `TicketUserReply hook failed: ...` to Utilities > Logs > Activity Log and the reply is still saved.
 4. The priority change fires `TicketPriorityChange` (`whticketpriority`), not `TicketUserReply` again, so the rule cannot loop. Add `AddTicketNote` (see the example above) if staff should also see why it changed.
 
+## Example: escalate a ticket when staff write "escalate" in a note
+
+1. In `includes/hooks/tickets.php`, type `whticketnote` and press Tab. You get a `TicketAddNote` hook that already loads the ticket with `localAPI('GetTicket', ...)` inside a `try`, with the cursor on the line after it.
+2. `$vars` carries `ticketid` and `message` (the note text), so the rule needs no extra call. Replace the cursor line with:
+
+```php
+if (stripos($vars['message'], 'escalate') !== false) {
+    localAPI('UpdateTicket', ['ticketid' => $vars['ticketid'], 'priority' => 'High']);
+}
+```
+
+3. Open a ticket in the admin area, add a staff note that contains the word "escalate", and reload the ticket: its priority is High. If the call fails, the `catch` block writes `TicketAddNote hook failed: ...` to Utilities > Logs > Activity Log and the note is still saved.
+4. Changing the priority fires `TicketPriorityChange` (`whticketpriority`), not `TicketAddNote` again, so the rule cannot loop. The same shape works for `whticketsubject` (subject edited), `whticketflag` (ticket flagged to a staff member) and `whticketopenadmin` (staff opened the ticket for a client).
+
 ## Example: leave a note on the client when an invoice is refunded
 
 1. Create `includes/hooks/invoices.php` (or reuse it), make sure `<?php` is on the first line, type `whinvoicerefunded` and press Tab. You get an `InvoiceRefunded` hook that loads the invoice with `localAPI('GetInvoice', ...)` inside a `try`, with the cursor on the line after it. WHMCS passes `invoiceid` in `$vars`.
